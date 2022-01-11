@@ -1,6 +1,6 @@
 from mock_database.generators import enum, value, model, phrase, company_name, text, sequence, random_int, name, \
     random_float, url
-from mock_database.model import Example, Company, Industry, Source
+from mock_database.model import Example, Company, Industry, Source, Skill
 
 position_title = phrase(
     enum(['Senior', "Junior"]),
@@ -9,7 +9,12 @@ position_title = phrase(
 )
 
 industries = ["E-commerce", "Fintech", "Search Engines", "Gaming"]
+skills = ["Python", "Java", "Kotlin", "React", "Angular", "Go", "TensorFlow", "Spring"]
 companies = 50
+
+Skills = model(Skill, Skill.id_skill, {
+    Skill.description: sequence(skills)
+}, len(skills))
 
 Industries = model(Industry, Industry.id_industry, {
     Industry.industry: sequence(industries),
@@ -44,6 +49,7 @@ Examples = model(Example, Example.id, {
 
 
 def mock_data():
+    Skills()
     Industries()
     Sources()
     Companies()
