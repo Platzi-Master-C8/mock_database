@@ -1,6 +1,6 @@
 from mock_database.generators import enum, value, model, phrase, company_name, text, sequence, random_int, name, \
     random_float, url, boolean
-from mock_database.model import Company, Skill, Perk, CompanyPerk
+from mock_database.model import Company, Skill, Perk, CompanyPerk, Location, CompanyLocation
 
 position_title = phrase(
     enum(['Senior', "Junior"]),
@@ -40,9 +40,21 @@ CompanyPerks = model(CompanyPerk, CompanyPerk.id_position_perk, {
     CompanyPerk.company_id: Companies.id(True)
 }, companies)
 
+Locations = model(Location, Location.id_location, {
+    Location.country: enum(["Colombia", "Mexico", "Canada", "Estados Unidos"]),
+    Location.continent: value("America")
+}, companies)
+
+CompanyLocations = model(CompanyLocation, CompanyLocation.id_company_location, {
+    CompanyLocation.company_id: Companies.id(True),
+    CompanyLocation.location_id: Locations.id(True)
+}, companies)
+
 
 def mock_data():
     Skills()
     Perks()
+    Locations()
     Companies()
     CompanyPerks()
+    CompanyLocations()
