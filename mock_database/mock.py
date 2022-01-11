@@ -1,7 +1,7 @@
-from mock_database.generators import enum, value, phrase_from_enum, model
+from mock_database.generators import enum, value, model, phrase
 from mock_database.model import Example
 
-position_title = phrase_from_enum(
+position_title = phrase(
     enum(['Senior', "Junior"]),
     enum(['Backend', "Frontend", "Go", "Rust", "React", "FullStack", "Machine Learning", "Data Scientist"]),
     value("Developer")

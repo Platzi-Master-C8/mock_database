@@ -28,23 +28,46 @@ class ModelGenerator:
 
 
 def enum(values: list):
+    """
+    Choose randomly a value from a list
+    :param values: listo of values
+    :return: a generator
+    """
     return lambda: np.random.choice(values)
 
 
-def phrase_from_enum(*values):
+def phrase(*values):
+    """
+    create a phrase use generator values
+    :param values: possible values
+    :return: a string combining the different values
+    """
     return lambda: " ".join([v() for v in values])
 
 
 def value(v):
+    """
+    Return a constant value
+    :param v:
+    :return:
+    """
     return lambda: v
 
 
 def text():
+    """
+    Produce random text
+    :return:
+    """
     return lambda: fake.text()
 
 
 def url():
-    return phrase_from_enum(
+    """
+    produce a random url
+    :return:
+    """
+    return phrase(
         enum(["http://", "https://"]),
         enum(["platzi", "amazon", "google", "globant"]),
         value("."),
@@ -53,4 +76,11 @@ def url():
 
 
 def model(entity, fields, samples):
+    """
+    Produce entities and store them in the database
+    :param entity:
+    :param fields:
+    :param samples:
+    :return:
+    """
     return ModelGenerator(entity, fields, samples)
