@@ -1,5 +1,6 @@
-from mock_database.generators import enum, value, model, phrase
-from mock_database.model import Example
+from mock_database.generators import enum, value, model, phrase, company_name, text, sequence, random_int, name, \
+    random_float, url
+from mock_database.model import Example, Company, Industry, Source
 
 position_title = phrase(
     enum(['Senior', "Junior"]),
@@ -7,14 +8,43 @@ position_title = phrase(
     value("Developer")
 )
 
-# Positions = model(Position, {
-#     Position.position_title: position_title,
-# }).enum(20)
+industries = ["E-commerce", "Fintech", "Search Engines", "Gaming"]
+companies = 50
 
-Examples = model(Example, {
+Industries = model(Industry, Industry.id_industry, {
+    Industry.industry: sequence(industries),
+    Industry.description: text(150)
+}, len(industries))
+
+Sources = model(Source, Source.id_source, {
+    Source.description: text(500),
+    Source.url: url(),
+    Source.documentation: text(500)
+}, companies)
+
+Companies = model(Company, Company.id_company, {
+    Company.name: company_name(50),
+    Company.description: text(150),
+    Company.industry_id: Industries.id(),
+    Company.company_size: random_int(10, 3000),
+    Company.ceo: name(50),
+    Company.avg_reputation: random_float(0, 100),
+    Company.total_ratings: random_int(0, 50),
+    Company.ceo_score: random_float(0, 100),
+    Company.website: url(),
+    Company.culture_score: random_float(0, 100),
+    Company.work_life_balance: random_float(0, 100),
+    Company.stress_level: random_float(0, 100),
+    Company.source_id: Sources.id()
+}, companies)
+
+Examples = model(Example, Example.id, {
     Example.title: position_title
 }, 20)
 
 
 def mock_data():
+    Industries()
+    Sources()
+    Companies()
     Examples()

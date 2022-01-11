@@ -8,7 +8,8 @@ fake = Faker()
 
 class ModelGenerator:
 
-    def __init__(self, entity, fields, length):
+    def __init__(self, entity, id, fields, length):
+        self._id = id
         self.entity = entity
         self.fields = fields
         self.length = length
@@ -25,6 +26,27 @@ class ModelGenerator:
             session.commit()
 
         return self.samples()
+
+    def id(self):
+        return lambda: self().__getattribute__(self._id.name)
+
+
+class Sequence:
+
+    def __init__(self, values):
+        self.values = values
+        self.counter = 0
+
+    def __call__(self, *args, **kwargs):
+        result = self.values[self.counter]
+        self.counter = self.counter + 1
+        if self.counter == len(self.values):
+            self.counter = 0
+        return result
+
+
+def sequence(values: list):
+    return Sequence(values)
 
 
 def enum(values: list):
@@ -54,12 +76,12 @@ def value(v):
     return lambda: v
 
 
-def text():
+def text(length):
     """
     Produce random text
     :return:
     """
-    return lambda: fake.text()
+    return lambda: str(fake.text())[:length]
 
 
 def url():
@@ -75,7 +97,7 @@ def url():
     )
 
 
-def model(entity, fields, samples):
+def model(entity, id, fields, samples):
     """
     Produce entities and store them in the database
     :param entity:
@@ -83,4 +105,40 @@ def model(entity, fields, samples):
     :param samples:
     :return:
     """
-    return ModelGenerator(entity, fields, samples)
+    return ModelGenerator(entity, id, fields, samples)
+
+
+def company_name(length):
+    """
+    Produce random company names
+    :return:
+    """
+    return lambda: fake.company()[:length]
+
+
+def name(length):
+    """
+    Produce random person name
+    :return:
+    """
+    return lambda: fake.name()[:length]
+
+
+def random_int(min, max):
+    """
+    Produce random number in range
+    :param min:
+    :param max:
+    :return:
+    """
+    return lambda: min + np.random.randint(max - min)
+
+
+def random_float(min, max):
+    """
+    Produce random number in range
+    :param min:
+    :param max:
+    :return:
+    """
+    return lambda: min + np.random.rand() * max
