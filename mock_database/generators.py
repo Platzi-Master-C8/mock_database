@@ -14,6 +14,7 @@ class ModelGenerator:
         self.fields = fields
         self.length = length
         self.samples = None
+        self._data = []
 
     def __call__(self, *args, **kwargs):
         def create():
@@ -22,13 +23,20 @@ class ModelGenerator:
             return entity
 
         if self.samples is None:
-            self.samples = enum([create() for x in range(0, self.length)])
+            self._data = [create() for x in range(0, self.length)]
+            self.samples = enum(self._data)
             session.commit()
 
         return self.samples()
 
-    def id(self):
-        return lambda: self().__getattribute__(self._id.name)
+    def id(self, as_sequence: bool = False):
+        self()
+        if as_sequence:
+            data_provider = sequence(self._data)
+        else:
+            data_provider = self.samples
+
+        return lambda: data_provider().__getattribute__(self._id.name)
 
 
 class Sequence:
@@ -142,3 +150,11 @@ def random_float(min, max):
     :return:
     """
     return lambda: min + np.random.rand() * max
+
+
+def boolean():
+    """
+    Produce a random boolean value
+    :return:
+    """
+    return lambda: (np.random.randint(100) % 2) == 0

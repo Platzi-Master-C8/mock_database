@@ -69,16 +69,16 @@ class PositionSkill(Base):
     __tablename__ = 'position_skill'
 
     id_position_skill = Column(Integer, primary_key=True, autoincrement=True)
-    position_id = Column(Integer, ForeignKey('position.id_position'), primary_key=True)
-    skill_id = Column(Integer, ForeignKey('skill.id_skill'), primary_key=True)
+    position_id = Column(Integer, ForeignKey('position.id_position'))
+    skill_id = Column(Integer, ForeignKey('skill.id_skill'))
 
 
 class CompanyPerk(Base):
     __tablename__ = 'company_perk'
 
     id_position_perk = Column(Integer, primary_key=True, autoincrement=True)
-    company_id = Column(Integer, ForeignKey('company.id_company'), primary_key=True)
-    perk_id = Column(Integer, ForeignKey('perk.id_perk'), primary_key=True)
+    company_id = Column(Integer, ForeignKey('company.id_company'))
+    perk_id = Column(Integer, ForeignKey('perk.id_perk'))
 
 
 class Perk(Base):
@@ -86,7 +86,7 @@ class Perk(Base):
 
     id_perk = Column(Integer, primary_key=True, autoincrement=True)
     perk = Column(String(150), nullable=False)
-    perk_company = relationship('Company', secondary='position_skill')
+    perk_company = relationship('Company', secondary='company_perk')
 
 
 class Company(Base):
@@ -106,15 +106,15 @@ class Company(Base):
     work_life_balance = Column(Float, nullable=True)
     stress_level = Column(Float, nullable=True)
     company_location = relationship('Location', secondary='company_location')
-    company_perk = relationship('Perk', secondary='position_perk')
+    company_perk = relationship('Perk', secondary='company_perk')
 
 
 class CompanyLocation(Base):
     __tablename__ = 'company_location'
 
     id_company_location = Column(Integer, primary_key=True, autoincrement=True)
-    company_id = Column(Integer, ForeignKey('company.id_company'), primary_key=True)
-    location_id = Column(Integer, ForeignKey('location.id_location'), primary_key=True)
+    company_id = Column(Integer, ForeignKey('company.id_company'))
+    location_id = Column(Integer, ForeignKey('location.id_location'))
 
 
 class Location(Base):
