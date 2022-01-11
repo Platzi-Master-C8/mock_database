@@ -1,5 +1,5 @@
 from mock_database.generators import enum, value, phrase_from_enum, model
-from mock_database.model import Position
+from mock_database.model import Example
 
 position_title = phrase_from_enum(
     enum(['Senior', "Junior"]),
@@ -7,6 +7,14 @@ position_title = phrase_from_enum(
     value("Developer")
 )
 
-Positions = model(Position, {
-    Position.position_title.name: position_title,
-}).enum(20)
+# Positions = model(Position, {
+#     Position.position_title: position_title,
+# }).enum(20)
+
+Examples = model(Example, {
+    Example.title: position_title
+}, 20)
+
+
+def mock_data():
+    Examples()

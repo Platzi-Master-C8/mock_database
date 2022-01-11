@@ -8,18 +8,23 @@ fake = Faker()
 
 class ModelGenerator:
 
-    def __init__(self, entity, fields):
+    def __init__(self, entity, fields, length):
         self.entity = entity
         self.fields = fields
+        self.length = length
+        self.samples = None
 
     def __call__(self, *args, **kwargs):
-        entity = self.entity(**{name: field() for (name, field) in self.fields.items()})
-        return session.add(entity)
+        def create():
+            entity = self.entity(**{name.name: field() for (name, field) in self.fields.items()})
+            session.add(entity)
+            return entity
 
-    def enum(self, length):
-        result = enum([self() for x in range(0, length)])
-        session.commit()
-        return result
+        if self.samples is None:
+            self.samples = enum([create() for x in range(0, self.length)])
+            session.commit()
+
+        return self.samples()
 
 
 def enum(values: list):
@@ -47,5 +52,5 @@ def url():
     )
 
 
-def model(entity, fields):
-    return ModelGenerator(entity, fields)
+def model(entity, fields, samples):
+    return ModelGenerator(entity, fields, samples)

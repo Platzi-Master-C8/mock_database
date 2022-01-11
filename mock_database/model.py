@@ -121,3 +121,10 @@ class UserInterview(Base):
     job_position = Column(String(50), nullable=True)
     description = Column(Text, nullable=False)
     difficult = Column(String(50), nullable=True)
+
+
+class Example(Base):
+    __tablename__ = 'example'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(150), nullable=False)
