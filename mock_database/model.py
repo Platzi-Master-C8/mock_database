@@ -37,8 +37,8 @@ class PositionSkill(Base):
     __tablename__ = 'position_skill'
 
     id_position_skill = Column(Integer, primary_key=True, autoincrement=True)
-    position_id = Column(Integer, ForeignKey('position.id_position'), primary_key=True)
-    skill_id = Column(Integer, ForeignKey('skill.id_skill'), primary_key=True)
+    position_id = Column(Integer, ForeignKey('position.id_position'))
+    skill_id = Column(Integer, ForeignKey('skill.id_skill'))
 
 
 class Company(Base):
