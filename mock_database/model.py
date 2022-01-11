@@ -8,9 +8,31 @@ Base = declarative_base()
 class Skill(Base):
     __tablename__ = 'skill'
 
-    id_skill = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(String(150), nullable=False)
-    position_skill_id = relationship('Position', secondary='position_skill')
+    id_skill = Column(Integer, primary_key=True, autoincrement=True, unique=True)
+    skill = Column(String(150), nullable=False)
+    skill_position = relationship('Position', secondary='position_skill')
+
+
+class Seniority(Base):
+    __tablename__ = 'seniority'
+
+    id_seniority = Column(Integer, primary_key=True, autoincrement=True)
+    seniority = Column(String(50), nullable=False)
+
+
+class Currency(Base):
+    __tablename__ = 'currency'
+
+    id_currency = Column(Integer, primary_key=True, autoincrement=True)
+    currency = Column(String(50), nullable=False)
+    country = Column(String(50), nullable=False)
+
+
+class PositionCategory(Base):
+    __tablename__ = 'position_category'
+
+    id_position_category = Column(Integer, primary_key=True, autoincrement=True)
+    category = Column(String(50), nullable=False)
 
 
 class Position(Base):
@@ -18,27 +40,53 @@ class Position(Base):
 
     id_position = Column(Integer, primary_key=True, autoincrement=True)
     position_title = Column(String(150), nullable=False)
-    description = Column(Text, nullable=True)
+    position_category_id = Column(Integer, ForeignKey('position_category.id_position_category'))
+    position_category = relationship('PositionCategory')
+    seniority_id = Column(Integer, ForeignKey('seniority.id_seniority'))
+    seniority = relationship('Seniority')
+    description = Column(Text, nullable=False)
     modality = Column(String(50), nullable=False)
     date_position = Column(DateTime, nullable=False)
     activate = Column(Boolean, default=True, nullable=False)
-    num_offers = Column(Integer, default=0, nullable=True)
+    num_offers = Column(Integer, default=1, nullable=True)
     salary_min = Column(Integer, nullable=True)
     salary_max = Column(Integer, nullable=True)
     salary = Column(Integer, nullable=True)
-    currency = Column(String(50), nullable=True)
-    bonus = Column(Integer, nullable=True)
-    remote = Column(Boolean, default=True, nullable=True)
-    position_skill_id = relationship('Skill', secondary='position_skill')
+    currency_id = Column(Integer, ForeignKey('currency.id_currency'))
+    currency = relationship('Currency')
+    remote = Column(Boolean, nullable=False)
+    location_id = Column(Integer, ForeignKey('location.id_location'))
+    position_location = relationship('Location')
+    english = Column(Boolean, nullable=False)
+    english_level = Column(String(50), nullable=True)
+    position_url = Column(Text, nullable=False)
     company_id = Column(Integer, ForeignKey('company.id_company'))
+    position_company = relationship('Company')
+    position_skill = relationship('Skill', secondary='position_skill')
 
 
 class PositionSkill(Base):
     __tablename__ = 'position_skill'
 
     id_position_skill = Column(Integer, primary_key=True, autoincrement=True)
-    position_id = Column(Integer, ForeignKey('position.id_position'))
-    skill_id = Column(Integer, ForeignKey('skill.id_skill'))
+    position_id = Column(Integer, ForeignKey('position.id_position'), primary_key=True)
+    skill_id = Column(Integer, ForeignKey('skill.id_skill'), primary_key=True)
+
+
+class CompanyPerk(Base):
+    __tablename__ = 'company_perk'
+
+    id_position_perk = Column(Integer, primary_key=True, autoincrement=True)
+    company_id = Column(Integer, ForeignKey('company.id_company'), primary_key=True)
+    perk_id = Column(Integer, ForeignKey('perk.id_perk'), primary_key=True)
+
+
+class Perk(Base):
+    __tablename__ = 'perk'
+
+    id_perk = Column(Integer, primary_key=True, autoincrement=True)
+    perk = Column(String(150), nullable=False)
+    perk_company = relationship('Company', secondary='position_skill')
 
 
 class Company(Base):
@@ -47,7 +95,7 @@ class Company(Base):
     id_company = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     description = Column(Text, nullable=True)
-    industry_id = Column(Integer, ForeignKey('industry.id_industry'))
+    company_premium = Column(Boolean, default=False)
     company_size = Column(Integer, nullable=True)
     ceo = Column(String(50), nullable=False)
     avg_reputation = Column(Float, nullable=True)
@@ -57,37 +105,25 @@ class Company(Base):
     culture_score = Column(Float, nullable=True)
     work_life_balance = Column(Float, nullable=True)
     stress_level = Column(Float, nullable=True)
-    source_id = Column(Integer, ForeignKey('source.id_source'))
+    company_location = relationship('Location', secondary='company_location')
+    company_perk = relationship('Perk', secondary='position_perk')
 
 
 class CompanyLocation(Base):
     __tablename__ = 'company_location'
 
+    id_company_location = Column(Integer, primary_key=True, autoincrement=True)
+    company_id = Column(Integer, ForeignKey('company.id_company'), primary_key=True)
+    location_id = Column(Integer, ForeignKey('location.id_location'), primary_key=True)
+
+
+class Location(Base):
+    __tablename__ = 'location'
+
     id_location = Column(Integer, primary_key=True, autoincrement=True)
-    company_id = Column(Integer, ForeignKey('company.id_company'))
-    company = relationship('Company')
-    location = Column(String(50), nullable=False)
     country = Column(String(50), nullable=False)
     continent = Column(String(50), nullable=False)
-
-
-class Source(Base):
-    __tablename__ = 'source'
-
-    id_source = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(Text, nullable=True)
-    url = Column(String(300), nullable=False)
-    documentation = Column(String(300), nullable=True)
-    company = relationship('Company')
-
-
-class Industry(Base):
-    __tablename__ = 'industry'
-
-    id_industry = Column(Integer, primary_key=True, autoincrement=True)
-    industry = Column(String(50), nullable=False)
-    description = Column(String(150), nullable=True)
-    company = relationship('Company')
+    location_company = relationship('Company', secondary='company_location')
 
 
 class UserReview(Base):
@@ -95,7 +131,7 @@ class UserReview(Base):
 
     id_review = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(Integer, ForeignKey('company.id_company'))
-    company = relationship('Company')
+    review_company = relationship('Company')
     title = Column(String(150), nullable=True)
     position_user = Column(String(50), nullable=True)
     pros = Column(Text, nullable=True)
@@ -108,7 +144,7 @@ class UserReview(Base):
     score_work = Column(Float, nullable=True)
     score_stress_level = Column(Float, nullable=True)
     score_work_life_balance = Column(Float, nullable=True)
-    source_link = Column(String(150), nullable=True)
+    review_link = Column(Text, nullable=False)
 
 
 class UserInterview(Base):
@@ -116,8 +152,10 @@ class UserInterview(Base):
 
     id_review = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(Integer, ForeignKey('company.id_company'))
-    company = relationship('Company')
+    interview_company = relationship('Company')
     title = Column(String(150), nullable=True)
     job_position = Column(String(50), nullable=True)
+    difficult = Column(Float, nullable=True)
     description = Column(Text, nullable=False)
-    difficult = Column(String(50), nullable=True)
+    interview_date = Column(DateTime, nullable=True)
+    interview_link = Column(Text, nullable=False)

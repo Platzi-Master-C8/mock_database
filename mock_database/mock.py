@@ -13,7 +13,7 @@ skills = ["Python", "Java", "Kotlin", "React", "Angular", "Go", "TensorFlow", "S
 companies = 50
 
 Skills = model(Skill, Skill.id_skill, {
-    Skill.description: sequence(skills)
+    Skill.skill: sequence(skills)
 }, len(skills))
 
 Industries = model(Industry, Industry.id_industry, {
