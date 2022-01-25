@@ -41,18 +41,14 @@ class ModelGenerator:
 
     def update(self):
         def update_record(row):
-            update_row = False
-            for (field_name, field) in self.fields:
+            for (field_name, field) in self.fields.items():
                 field_value = row.__getattribute__(field_name.name)
                 if field_value is None:
-                    update_row = True
                     row.__setattr__(field_name.name, field())
-            if update_row:
-                session.save(row)
             return row
 
         if self.samples is None:
-            self._data = [update_record(row) for row in session.execute(select(self.entity))]
+            self._data = [update_record(row) for row in session.query(self.entity).all()]
             self.samples = enum(self._data)
             session.commit()
 

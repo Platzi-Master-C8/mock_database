@@ -60,5 +60,21 @@ def mock_data():
     CompanyLocations()
 
 
-def update_records():
-    Companies.update()
+Companies2Update = model(Company, Company.id_company, {
+    Company.name: company_name(50),
+    Company.description: text(150),
+    Company.company_premium: boolean(),
+    Company.company_size: random_int(10, 3000),
+    Company.ceo: name(50),
+    Company.avg_reputation: random_float(0, 100),
+    Company.total_ratings: random_int(0, 50),
+    Company.ceo_score: random_float(0, 100),
+    Company.website: url(),
+    Company.culture_score: random_float(0, 100),
+    Company.work_life_balance: random_float(0, 100),
+    Company.stress_level: random_float(0, 100)
+}, companies)
+
+
+def update_data():
+    Companies2Update.update()
