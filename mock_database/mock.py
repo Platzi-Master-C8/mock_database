@@ -59,5 +59,6 @@ def mock_data():
     CompanyPerks()
     CompanyLocations()
 
+
 def update_records():
     Companies.update()
