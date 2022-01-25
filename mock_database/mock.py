@@ -58,3 +58,6 @@ def mock_data():
     Companies()
     CompanyPerks()
     CompanyLocations()
+
+def update_records():
+    Companies.update()

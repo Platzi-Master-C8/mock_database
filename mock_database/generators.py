@@ -1,5 +1,6 @@
 import numpy as np
 from faker import Faker
+from sqlalchemy import select
 
 from mock_database.datasource import session
 
@@ -31,6 +32,34 @@ class ModelGenerator:
 
     def id(self, as_sequence: bool = False):
         self()
+        if as_sequence:
+            data_provider = sequence(self._data)
+        else:
+            data_provider = self.samples
+
+        return lambda: data_provider().__getattribute__(self._id.name)
+
+    def update(self):
+        def update_record(row):
+            update_row = False
+            for (field_name, field) in self.fields:
+                field_value = row.__getattribute__(field_name.name)
+                if field_value is None:
+                    update_row = True
+                    row.__setattr__(field_name.name, field())
+            if update_row:
+                session.save(row)
+            return row
+
+        if self.samples is None:
+            self._data = [update_record(row) for row in session.execute(select(self.entity))]
+            self.samples = enum(self._data)
+            session.commit()
+
+        return self.samples()
+
+    def update_id(self, as_sequence: bool = False):
+        self.update()
         if as_sequence:
             data_provider = sequence(self._data)
         else:
