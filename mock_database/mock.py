@@ -19,14 +19,14 @@ from mock_database.model import (
 
 def mock_data():
     position_title = phrase(
-        enum(['Senior', "Junior"]),
-        enum(['Backend', "Frontend", "Go", "Rust", "React", "FullStack", "Machine Learning", "Data Scientist"]),
+        enum(['Backend', "Frontend", "Kotlin", "Go", "Rust", "React", "FullStack", "Machine Learning", "Mobile",
+              "Flutter", "Android", "iOS", "Data Scientist"]),
         value("Developer")
     )
     modality = enum(["remote", "office", "hybrid"])
 
     skills = ["Python", "Java", "Kotlin", "React", "Angular", "Go", "TensorFlow", "Spring", "Quarkus", "Micronaut",
-              "Rust", "Svelte", "Clojure", "FastAPI", "pandas", "numpy"]
+              "Rust", "Svelte", "Clojure", "FastAPI", "pandas", "numpy", "Flutter", "Swift"]
     seniority = ["Junior Engineer", "Senior Engineer", "Lead Engineer", "Principal Engineer", "Staff Engineer"]
     perks = ["Remote work", "Snacks", "BYOD", "Day Off", "Prepaid medicine"]
     currency = ["USD"]
