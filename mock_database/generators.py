@@ -1,6 +1,6 @@
 import numpy as np
+import datetime
 from faker import Faker
-from sqlalchemy import select
 
 from mock_database.datasource import session
 
@@ -146,7 +146,16 @@ def company_name(length):
     Produce random company names
     :return:
     """
-    return lambda: fake.company()[:length]
+    taken = set()
+
+    def take_name():
+        new_value = fake.company()[:length]
+        if new_value in taken:
+            return take_name()
+        taken.add(new_value)
+        return new_value
+
+    return lambda: take_name()
 
 
 def name(length):
@@ -183,3 +192,13 @@ def boolean():
     :return:
     """
     return lambda: (np.random.randint(100) % 2) == 0
+
+
+def datetime_between(start, end):
+    """
+    produce a random date time between two dates
+    :param start:
+    :param end:
+    :return:
+    """
+    return lambda: fake.date_time_between_dates(datetime_start=start, datetime_end=end)
