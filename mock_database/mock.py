@@ -23,7 +23,7 @@ def mock_data():
               "Flutter", "Android", "iOS", "Data Scientist"]),
         value("Developer")
     )
-    modality = enum(["remote", "office", "hybrid"])
+    modality = enum(["fulltime", "partial time", "unknown"])
 
     skills = ["Python", "Java", "Kotlin", "React", "Angular", "Go", "TensorFlow", "Spring", "Quarkus", "Micronaut",
               "Rust", "Svelte", "Clojure", "FastAPI", "pandas", "numpy", "Flutter", "Swift"]
